@@ -1,46 +1,49 @@
-module "eks" {
-  source  = "terraform-aws-modules/eks/aws"
-  version = "~> 21.0"
-
-  name               = "my-cluster"
-  kubernetes_version = "1.34"
-  create_kms_key     = false
-
-  # addons = {
-  #   coredns                = {}
-  #   eks-pod-identity-agent = {
-  #     before_compute = true
-  #   }
-  #   kube-proxy             = {}
-  #   vpc-cni                = {
-  #     before_compute = true
-  #   }
-  # }
-
-  # Optional
-  endpoint_public_access = true
-
-  # Optional: Adds the current caller identity as an administrator via cluster access entry
-  enable_cluster_creator_admin_permissions = true
-
-  vpc_id                   = "vpc-0f995da5da96d9248"
-  subnet_ids               = ["subnet-0ce8afa0dde986bc0", "subnet-0629872d39e431ea9"]
-  control_plane_subnet_ids = ["subnet-0ce8afa0dde986bc0", "subnet-0629872d39e431ea9"]
-
-  # EKS Managed Node Group(s)
-  eks_managed_node_groups = {
-    example = {
-      # Starting on 1.30, AL2023 is the default AMI type for EKS managed node groups
-      ami_type       = "AL2023_x86_64_STANDARD"
-      instance_types = ["t3.xlarge"]
-
-      min_size     = 1
-      max_size     = 10
-      desired_size = 1
-    }
+resource "aws_eks_cluster" "main" {
+  name     = var.env
+  role_arn = aws_iam_role.cluster.arn
+  version  = "1.34"
+  vpc_config {
+    subnet_ids = ["subnet-0ce8afa0dde986bc0", "subnet-0629872d39e431ea9"]
   }
-
-  tags = {
-    Terraform   = "true"
+  access_config {
+    authentication_mode = "API_AND_CONFIG_MAP"
   }
 }
+
+# resource "aws_launch_template" "main" {
+#   name     = "main"
+#
+#   block_device_mappings {
+#     device_name = "/dev/xvda"
+#
+#     ebs {
+#       volume_size = 20
+#       encrypted   = true
+#     }
+#   }
+#
+# }
+
+resource "aws_eks_node_group" "main" {
+  cluster_name    = aws_eks_cluster.main.name
+  node_group_name = "main"
+  node_role_arn   = aws_iam_role.node.arn
+  subnet_ids      = ["subnet-0ce8afa0dde986bc0", "subnet-0629872d39e431ea9"]
+  instance_types  = ["t3.xlarge"]
+
+  # launch_template {
+  #   name    = aws_launch_template.main.name
+  #   version = "$Latest"
+  # }
+
+  scaling_config {
+    desired_size = 1
+    min_size     = 1
+    max_size     = 10
+  }
+
+  update_config {
+    max_unavailable = 1
+  }
+}
+
