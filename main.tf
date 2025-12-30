@@ -1,3 +1,11 @@
+terraform {
+  required_providers {
+    null = {
+      source  = "hashicorp/null"
+      version = "3.2.4"
+    }
+  }
+}
 resource "aws_eks_cluster" "main" {
   name     = var.env
   role_arn = aws_iam_role.cluster.arn
@@ -41,5 +49,16 @@ resource "aws_eks_access_policy_association" "workstation" {
 
   access_scope {
     type       = "cluster"
+  }
+}
+
+resource "null_resource" "kubeconfig" {
+
+  triggers = {
+    cluster = timestamp()
+  }
+
+  provisioner "local-exec" {
+    command = "rm -rf ~/.kube ; aws eks update-kubeconfig --name dev"
   }
 }
