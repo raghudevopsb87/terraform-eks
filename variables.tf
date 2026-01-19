@@ -3,7 +3,7 @@ variable "env" {
 }
 
 variable "ami" {
-  default = "ami-09c813fb71547fc4f"
+  default = "ami-045a533d19c34eeb6"
 }
 
 variable "instance_type" {
