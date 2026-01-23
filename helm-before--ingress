@@ -11,6 +11,13 @@ resource "helm_release" "argocd" {
   name       = "argocd"
   repository = "https://argoproj.github.io/argo-helm"
   chart      = "argo-cd"
+
+  set = [
+    {
+      name  = "server.service.type"
+      value = "LoadBalancer"
+    }
+  ]
 }
 
 resource "helm_release" "prometheus-stack" {
@@ -23,6 +30,10 @@ resource "helm_release" "prometheus-stack" {
   values     = [file("prom-stack-values.yml")]
 
   set = [
+    {
+      name  = "prometheus.service.type"
+      value = "LoadBalancer"
+    },
     {
       name  = "grafana.enabled"
       value = false

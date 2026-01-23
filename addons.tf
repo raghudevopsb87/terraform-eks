@@ -9,17 +9,10 @@ resource "aws_eks_addon" "external-dns" {
   addon_name   = "external-dns"
 }
 
-
-resource "aws_eks_pod_identity_association" "example" {
-  cluster_name    = aws_eks_cluster.main.name
-  namespace       = "default"
-  service_account = "default"
-  role_arn        = "arn:aws:iam::739561048503:role/test"
-}
-
 resource "aws_eks_pod_identity_association" "external-dns" {
   cluster_name    = aws_eks_cluster.main.name
   namespace       = "external-dns"
   service_account = "external-dns"
   role_arn        = aws_iam_role.external-dns.arn
 }
+
