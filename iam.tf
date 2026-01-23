@@ -86,7 +86,7 @@ resource "aws_iam_role" "external-dns" {
         Effect = "Allow"
         Sid    = ""
         Principal = {
-          Service = "pod.eks.amazonaws.com"
+          Service = "pods.eks.amazonaws.com"
         }
       },
     ]
