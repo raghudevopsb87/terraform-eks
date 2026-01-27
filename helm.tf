@@ -32,8 +32,8 @@ resource "helm_release" "prometheus-stack" {
       value = true
     },
     {
-      name  = "grafana.enabled"
-      value = false
+      name  = "prometheus.ingress.ingressClassName"
+      value = "nginx"
     },
   ]
 
