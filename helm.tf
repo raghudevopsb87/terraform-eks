@@ -11,6 +11,21 @@ resource "helm_release" "argocd" {
   name       = "argocd"
   repository = "https://argoproj.github.io/argo-helm"
   chart      = "argo-cd"
+
+  set = [
+    {
+      name  = "server.ingress.enabled"
+      value = true
+    },
+    {
+      name  = "server.ingress.ingressClassName"
+      value = "nginx"
+    },
+    {
+      name  = "global.domain"
+      value = "argocd-${var.env}.rdevopsb87.online"
+    }
+  ]
 }
 
 resource "helm_release" "prometheus-stack" {
