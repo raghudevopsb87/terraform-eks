@@ -26,8 +26,15 @@ resource "helm_release" "prometheus-stack" {
     {
       name  = "grafana.enabled"
       value = false
-    }
-
+    },
+    {
+      name  = "prometheus.ingress.enabled"
+      value = true
+    },
+    {
+      name  = "grafana.enabled"
+      value = false
+    },
   ]
 
 }
@@ -41,6 +48,5 @@ resource "helm_release" "nginx-ingress" {
   chart      = "ingress-nginx"
 
 }
-
 
 
