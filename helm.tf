@@ -26,7 +26,7 @@ resource "helm_release" "argocd" {
       value = "argocd-${var.env}.rdevopsb87.online"
     },
     {
-      name  = "configs.params.server.insecure"
+      name  = "configs.params.server\\.insecure"
       value = true
     }
   ]
