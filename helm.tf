@@ -34,6 +34,12 @@ resource "helm_release" "prometheus-stack" {
     {
       name  = "prometheus.ingress.ingressClassName"
       value = "nginx"
+    }
+  ]
+    set_list= [
+    {
+      name  = "prometheus.ingress.hosts"
+      value = ["prometheus-${var.env}.rdevopsb87.online"]
     },
   ]
 
