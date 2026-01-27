@@ -6,7 +6,7 @@ provider "helm" {
 
 resource "helm_release" "argocd" {
 
-  depends_on = [null_resource.kubeconfig]
+  depends_on = [null_resource.kubeconfig, helm_release.nginx-ingress]
 
   name       = "argocd"
   repository = "https://argoproj.github.io/argo-helm"
@@ -34,7 +34,7 @@ resource "helm_release" "argocd" {
 
 resource "helm_release" "prometheus-stack" {
 
-  depends_on = [null_resource.kubeconfig]
+  depends_on = [null_resource.kubeconfig,helm_release.nginx-ingress]
 
   name       = "promstack"
   repository = "https://prometheus-community.github.io/helm-charts"
@@ -71,6 +71,13 @@ resource "helm_release" "nginx-ingress" {
   name       = "ingress"
   repository = "https://kubernetes.github.io/ingress-nginx"
   chart      = "ingress-nginx"
+
+  set = [
+    {
+      name  = "controller.metrics.enabled"
+      value = true
+    },
+  ]
 
 }
 
