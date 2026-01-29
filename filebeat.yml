@@ -38,5 +38,5 @@ daemonset:
         multiline.negate: true
         multiline.match: after
       output.logstash:
-        hosts: 'elk-stack-int.rdevopsb84.online:5044'
+        hosts: '172.31.90.249:5044'
 
