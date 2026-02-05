@@ -111,3 +111,63 @@ resource "aws_iam_role" "external-dns" {
   }
 
 }
+
+
+## Cluster Autoscaler
+
+resource "aws_iam_role" "cluster-autoscaler" {
+  name = "${var.env}-cluster-autoscaler-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "sts:AssumeRole",
+          "sts:TagSession"
+        ]
+        Effect = "Allow"
+        Principal = {
+          Service = "pods.eks.amazonaws.com"
+        }
+      },
+    ]
+  })
+
+  inline_policy {
+    name = "cluster-autoscaler"
+
+    policy = jsonencode({
+      Version = "2012-10-17"
+      Statement = [
+        {
+          Action = [
+            "autoscaling:DescribeAutoScalingGroups",
+            "autoscaling:DescribeAutoScalingInstances",
+            "autoscaling:DescribeLaunchConfigurations",
+            "autoscaling:DescribeScalingActivities",
+            "ec2:DescribeImages",
+            "ec2:DescribeInstanceTypes",
+            "ec2:DescribeLaunchTemplateVersions",
+            "ec2:GetInstanceTypesFromInstanceRequirements",
+            "eks:DescribeNodegroup",
+            "autoscaling:SetDesiredCapacity",
+            "autoscaling:TerminateInstanceInAutoScalingGroup"
+          ]
+          Effect   = "Allow"
+          Resource = "*"
+        },
+      ]
+    })
+  }
+
+}
+
+resource "aws_eks_pod_identity_association" "cluster-autoscaler" {
+  cluster_name    = var.env
+  namespace       = "default"
+  service_account = "cluster-autoscaler-aws-cluster-autoscaler"
+  role_arn        = aws_iam_role.cluster-autoscaler.arn
+}
+
+

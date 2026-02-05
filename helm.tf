@@ -102,4 +102,23 @@ resource "helm_release" "filebeat" {
 
 }
 
+# Cluster Autoscaler
+resource "helm_release" "cluster-autoscaler" {
+  depends_on       = [null_resource.kubeconfig, aws_eks_pod_identity_association.cluster-autoscaler]
+  name             = "cluster-autoscaler"
+  repository       = "https://kubernetes.github.io/autoscaler"
+  chart            = "cluster-autoscaler"
+  namespace        = "default"
+  create_namespace = true
 
+  set {
+    name  = "autoDiscovery.clusterName"
+    value = var.env
+  }
+
+  set {
+    name  = "awsRegion"
+    value = "us-east-1"
+  }
+
+}
