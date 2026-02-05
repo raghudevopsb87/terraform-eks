@@ -111,14 +111,15 @@ resource "helm_release" "cluster-autoscaler" {
   namespace        = "default"
   create_namespace = true
 
-  set {
-    name  = "autoDiscovery.clusterName"
-    value = var.env
-  }
-
-  set {
-    name  = "awsRegion"
-    value = "us-east-1"
-  }
-
+  set = [
+    {
+      name  = "autoDiscovery.clusterName"
+      value = var.env
+    },
+    {
+      name  = "awsRegion"
+      value = "us-east-1"
+    }
+  ]
 }
+
