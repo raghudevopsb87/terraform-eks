@@ -163,11 +163,6 @@ resource "aws_iam_role" "cluster-autoscaler" {
 
 }
 
-resource "aws_eks_pod_identity_association" "cluster-autoscaler" {
-  cluster_name    = var.env
-  namespace       = "default"
-  service_account = "cluster-autoscaler-aws-cluster-autoscaler"
-  role_arn        = aws_iam_role.cluster-autoscaler.arn
-}
+
 
 

@@ -16,3 +16,11 @@ resource "aws_eks_pod_identity_association" "external-dns" {
   role_arn        = aws_iam_role.external-dns.arn
 }
 
+resource "aws_eks_pod_identity_association" "cluster-autoscaler" {
+  cluster_name    = aws_eks_cluster.main.name
+  namespace       = "default"
+  service_account = "cluster-autoscaler-aws-cluster-autoscaler"
+  role_arn        = aws_iam_role.cluster-autoscaler.arn
+}
+
+
